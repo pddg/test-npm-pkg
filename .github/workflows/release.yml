@@ -47,5 +47,6 @@ jobs:
           else
             VERSION=v$(jq -r ".version" package.json)
             echo "$(VERSION) already exists. Skipped."
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
