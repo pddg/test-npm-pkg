@@ -29,6 +29,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@pddg'
       - uses: actions/cache@v2
         id: node_modules_cache
         with:
@@ -38,7 +40,7 @@ jobs:
         if: steps.node_modules_cache.outputs.cache-hit != 'true'
         run: |
           npm ci
-      - name: Run npm publish
+      - name: Run npm publish (npmjs)
         run: |
           if npx can-npm-publish
           then
@@ -50,3 +52,19 @@ jobs:
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      - uses: actions/setup-node@v1
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+          scope: "@pddg"
+      - name: Run npm publish (GitHub Package Registry)
+        run: |
+          if npx can-npm-publish
+          then
+            echo "Try to publish package..."
+            npm publish
+          else
+            VERSION=v$(jq -r ".version" package.json)
+            echo "$(VERSION) already exists. Skipped."
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
