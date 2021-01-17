@@ -59,6 +59,7 @@ jobs:
   check-version:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    environment: github
     needs:
       - lint
       - test-and-build
